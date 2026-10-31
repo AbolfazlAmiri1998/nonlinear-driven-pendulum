@@ -57,13 +57,37 @@ The main simulation parameters are:
 
 ## Results
 
-For the selected parameters, the initial angular difference is approximately $10^{-6}$. By the end of the simulation, the maximum absolute angular difference reaches approximately $0.481$.
+For the selected parameters, the initial angular difference between the two trajectories is approximately $10^{-6}$. During the simulation, the maximum absolute angular difference reaches approximately $0.481$.
 
-A parameter study is also performed by varying the driving amplitude from $0.8$ to $1.4$ while keeping the other parameters and initial conditions fixed.
+A parameter study was performed by varying the driving amplitude from $F_D=0.8$ to $F_D=1.4$, while keeping the other parameters and initial conditions fixed. The largest trajectory separation among the tested amplitudes occurs at $F_D=1.20$.
 
-The largest trajectory separation among the tested driving amplitudes occurs at $F_D=1.20$, with a maximum difference of approximately $0.481$.
+### Largest Lyapunov Exponent
 
-These results indicate sensitivity to initial conditions for the selected simulation parameters and time interval. However, trajectory divergence alone is not sufficient to establish mathematical chaos.
+The largest Lyapunov exponent was estimated using three numerical approaches:
+
+- **Variational equations:** approximately $0.13$.
+- **Two-trajectory method:** $0.13251$.
+- **Poincaré-period renormalization:** $0.13023$.
+
+The estimates obtained from the two independent trajectory-based methods differ by approximately $1.72\%$. Their agreement, together with the variational-equation estimate, supports the numerical consistency of a positive largest Lyapunov exponent:
+
+$$
+\lambda_{\max}\approx 0.13
+$$
+
+A positive largest Lyapunov exponent indicates exponential sensitivity to small perturbations in the initial conditions.
+
+### Poincaré Section
+
+The Poincaré section was constructed by sampling the system once per driving period, after removing an initial transient.
+
+The resulting section exhibits a structured, narrow, and nontrivial distribution of points. This provides additional information about the long-term dynamics and is consistent with a complex attractor structure.
+
+### Interpretation
+
+The observed trajectory separation, the positive largest Lyapunov exponent obtained using multiple numerical approaches, and the structure of the Poincaré section together provide strong numerical evidence consistent with chaotic dynamics for the investigated parameter values.
+
+These conclusions apply to the selected parameters and numerical setup; further parameter-space analysis would be needed to characterize the full range of dynamical regimes.
 
 ## Numerical Validation
 
@@ -75,8 +99,11 @@ The close agreement supports the numerical consistency of the observed trajector
 
 ## Model Limitations
 
-1. The model assumes linear damping and sinusoidal external forcing. Other physical effects, such as nonlinear friction and measurement noise, are not included.
-2. Trajectory divergence alone does not prove chaos. Further analysis, such as estimating the largest Lyapunov exponent or constructing a Poincaré section, would be needed for a stronger conclusion.
+1. The model assumes linear damping and sinusoidal external forcing. Other physical effects, such as nonlinear friction, noise, and parameter uncertainty, are not included.
+
+2. The numerical conclusions are specific to the investigated parameter range and initial conditions. Different values of the damping coefficient, driving amplitude, or driving frequency may lead to different dynamical regimes.
+
+3. Numerical estimates of the largest Lyapunov exponent depend on integration accuracy, transient removal, renormalization interval, and total integration time. Therefore, convergence and cross-validation are important when interpreting the result.
 
 ## Requirements
 
@@ -133,10 +160,11 @@ nonlinear-driven-pendulum/
 
 Possible extensions include:
 
-- Estimating the largest Lyapunov exponent.
-- Constructing Poincaré sections.
-- Investigating the effect of damping and driving frequency.
-- Exploring the system's behavior over a wider range of parameters.
+- Mapping the transition between regular and chaotic dynamics over a wider parameter range.
+- Constructing bifurcation diagrams as a function of the driving amplitude or frequency.
+- Investigating how the largest Lyapunov exponent changes across different dynamical regimes.
+- Studying the influence of damping and driving frequency on the structure of the attractor.
+- Comparing numerical predictions with experimental driven-pendulum systems.
 
 ## Author
 
