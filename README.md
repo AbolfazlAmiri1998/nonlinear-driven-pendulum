@@ -1,5 +1,7 @@
 # Nonlinear Dynamics and Chaos in a Driven Pendulum
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A numerical investigation of a damped, periodically driven nonlinear pendulum, focusing on chaotic dynamics, sensitivity to initial conditions, Lyapunov exponents, Poincaré sections, and coexisting regular and chaotic attractors.
 
 ## Overview
