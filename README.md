@@ -1,16 +1,29 @@
-# Nonlinear Driven Pendulum and Sensitivity to Initial Conditions
+# Nonlinear Dynamics and Chaos in a Driven Pendulum
 
-A numerical study of a damped, periodically driven nonlinear pendulum, focusing on the sensitivity of its trajectories to nearby initial conditions.
+A numerical investigation of a damped, periodically driven nonlinear pendulum, focusing on chaotic dynamics, sensitivity to initial conditions, Lyapunov exponents, Poincaré sections, and coexisting regular and chaotic attractors.
 
 ## Overview
 
-This project investigates the dynamics of a nonlinear driven pendulum by numerically solving its equation of motion. Two trajectories with nearly identical initial conditions are compared to examine how small initial differences evolve over time.
+This project investigates the nonlinear dynamics of a periodically driven, damped pendulum by numerically solving its equations of motion.
 
-The project also explores how the observed trajectory separation changes with the driving amplitude.
+The study begins by examining the sensitivity of nearby trajectories to small differences in their initial conditions. It then explores the dependence of the observed dynamics on the driving amplitude and investigates the system's long-term behavior using several complementary numerical techniques.
+
+The analysis includes:
+
+- Numerical integration of the nonlinear equations of motion.
+- Sensitivity to initial conditions.
+- Parameter dependence of trajectory separation.
+- Largest Lyapunov exponent estimation using independent numerical approaches.
+- Full Lyapunov spectrum calculation using the variational equations and QR decomposition.
+- Poincaré sections for investigating long-term dynamics.
+- Coexisting regular and chaotic attractors.
+- Preliminary basin of attraction analysis.
+
+The project is implemented in Python using NumPy, SciPy, and Matplotlib.
 
 ## Mathematical Model
 
-The equation of motion is:
+The dimensionless equation of motion of the driven damped pendulum is
 
 $$
 \ddot{\theta}+q\dot{\theta}+\sin(\theta)
@@ -23,26 +36,41 @@ where:
 - $q$ is the damping coefficient.
 - $F_D$ is the driving amplitude.
 - $\Omega_D$ is the driving angular frequency.
+- $t$ is dimensionless time.
 
-By defining the angular velocity as $\omega=\dot{\theta}$, the equation becomes a system of first-order differential equations:
+Defining the angular velocity as
+
+$$
+\omega=\dot{\theta},
+$$
+
+the second-order equation can be expressed as a system of first-order differential equations:
 
 $$
 \dot{\theta}=\omega
 $$
 
 $$
-\dot{\omega}=-q\omega-\sin(\theta)+F_D\cos(\Omega_Dt)
+\dot{\omega}
+=-q\omega-\sin(\theta)
++F_D\cos(\Omega_Dt)
 $$
 
-## Numerical Method
+This formulation is used for numerical integration and subsequent dynamical analysis.
 
-The system is solved using Python and SciPy's `solve_ivp` numerical integration function.
+## Numerical Methods
 
-Two nearby initial conditions are considered:
+The equations of motion are solved using Python's `scipy.integrate.solve_ivp` function.
+
+Numerical integration is performed with adaptive time stepping and controlled relative and absolute error tolerances.
+
+### Sensitivity to Initial Conditions
+
+Two trajectories with nearly identical initial conditions are considered:
 
 - First trajectory: $\theta_1(0)=0.2$
 - Second trajectory: $\theta_2(0)=0.200001$
-- Initial angular velocity: $\omega(0)=0$
+- Initial angular velocity: $\omega_1(0)=\omega_2(0)=0$
 
 The main simulation parameters are:
 
@@ -52,58 +80,203 @@ The main simulation parameters are:
 | Driving amplitude $F_D$ | $1.2$ |
 | Driving frequency $\Omega_D$ | $2/3$ |
 | Initial angular difference | $10^{-6}$ |
-| Simulation interval | $0 \leq t \leq 100$ |
-| Number of time points | 10,000 |
+| Simulation interval | $0\leq t\leq100$ |
+| Number of evaluation points | 10,000 |
 
-## Results
+For these parameters, the initial angular separation is approximately $10^{-6}$, while the maximum absolute angular separation reaches approximately $0.481$.
 
-For the selected parameters, the initial angular difference between the two trajectories is approximately $10^{-6}$. During the simulation, the maximum absolute angular difference reaches approximately $0.481$.
+A parameter study was also performed by varying the driving amplitude from $F_D=0.8$ to $F_D=1.4$, with the other parameters and initial conditions held fixed.
 
-A parameter study was performed by varying the driving amplitude from $F_D=0.8$ to $F_D=1.4$, while keeping the other parameters and initial conditions fixed. The largest trajectory separation among the tested amplitudes occurs at $F_D=1.20$.
+Among the tested amplitudes, the largest trajectory separation was observed at $F_D=1.20$.
 
-### Largest Lyapunov Exponent
+Trajectory separation alone does not establish chaos; therefore, additional dynamical indicators are used.
 
-The largest Lyapunov exponent was estimated using three numerical approaches:
+## Chaos Analysis and Lyapunov Exponents
 
-- **Variational equations:** approximately $0.13$.
-- **Two-trajectory method:** $0.13251$.
-- **Poincaré-period renormalization:** $0.13023$.
+The largest Lyapunov exponent is used to quantify the average exponential growth or decay of infinitesimal perturbations.
 
-The estimates obtained from the two independent trajectory-based methods differ by approximately $1.72\%$. Their agreement, together with the variational-equation estimate, supports the numerical consistency of a positive largest Lyapunov exponent:
+A positive largest Lyapunov exponent indicates exponential sensitivity to initial conditions.
+
+For the parameter set
 
 $$
-\lambda_{\max}\approx 0.13
+q=0.5,\qquad
+F_D=1.2,\qquad
+\Omega_D=\frac{2}{3},
 $$
 
-A positive largest Lyapunov exponent indicates exponential sensitivity to small perturbations in the initial conditions.
+the largest Lyapunov exponent was estimated using three numerical approaches:
 
-### Poincaré Section
+| Numerical method | Largest Lyapunov exponent |
+|---|---:|
+| Variational equations | Approximately $0.13$ |
+| Two-trajectory method | $0.13251$ |
+| Poincaré-period renormalization | $0.13023$ |
 
-The Poincaré section was constructed by sampling the system once per driving period, after removing an initial transient.
+The two trajectory-based estimates differ by approximately $1.72\%$.
 
-The resulting section exhibits a structured, narrow, and nontrivial distribution of points. This provides additional information about the long-term dynamics and is consistent with a complex attractor structure.
+The agreement between these independent numerical approaches supports the consistency of the positive largest Lyapunov exponent.
 
-### Interpretation
+Thus, for this parameter set,
 
-The observed trajectory separation, the positive largest Lyapunov exponent obtained using multiple numerical approaches, and the structure of the Poincaré section together provide strong numerical evidence consistent with chaotic dynamics for the investigated parameter values.
+$$
+\lambda_{\max}\approx 0.13.
+$$
 
-These conclusions apply to the selected parameters and numerical setup; further parameter-space analysis would be needed to characterize the full range of dynamical regimes.
+### Full Lyapunov Spectrum
+
+The full Lyapunov spectrum is calculated by integrating the variational equations together with the original dynamical system.
+
+The tangent-space evolution is periodically orthonormalized using QR decomposition to prevent numerical alignment of perturbation vectors.
+
+For a long integration time of 40,000 dimensionless time units, with strict solver tolerances, the estimated exponents are approximately
+
+$$
+\lambda_1\approx 0.131
+$$
+
+$$
+\lambda_2\approx -0.631.
+$$
+
+Their sum satisfies
+
+$$
+\lambda_1+\lambda_2\approx -0.5.
+$$
+
+This is consistent with the constant phase-space divergence of the two-dimensional system:
+
+$$
+\nabla\cdot f=-q=-0.5.
+$$
+
+The negative sum indicates phase-space contraction due to damping.
+
+The Kaplan–Yorke dimension estimated from this spectrum is approximately
+
+$$
+D_{KY}\approx 1.21.
+$$
+
+This is a numerical estimate derived from the Lyapunov spectrum, rather than a direct measurement of the geometric dimension of the attractor.
+
+## Poincaré Sections
+
+Poincaré sections are constructed by sampling the system once per driving period:
+
+$$
+T_D=\frac{2\pi}{\Omega_D}.
+$$
+
+An initial transient is discarded before collecting the sampling points.
+
+For the chaotic parameter regime, the resulting points form a structured and nontrivial distribution.
+
+Poincaré sections are also used to compare the long-term behavior of regular and chaotic trajectories under identical system parameters but different initial conditions.
+
+The observed distributions provide complementary information about the system's long-term dynamics.
+
+## Coexisting Regular and Chaotic Attractors
+
+An important result of this investigation is the numerical observation of coexisting regular and chaotic attractors for the same system parameters.
+
+The following parameters are used:
+
+$$
+q=0.5
+$$
+
+$$
+F_D=1.1092578125
+$$
+
+$$
+\Omega_D=\frac{2}{3}
+$$
+
+Two nearby initial conditions produce different long-term dynamical behaviors:
+
+| Initial condition $(\theta_0,\omega_0)$ | Observed behavior | Largest Lyapunov exponent |
+|---|---|---:|
+| $(0.265,0)$ | Regular | Approximately $-0.25$ |
+| $(0.266,0)$ | Chaotic | Approximately $+0.09$ to $+0.10$ |
+
+The full Lyapunov spectrum provides additional confirmation:
+
+For the regular trajectory,
+
+$$
+\lambda_1\approx-0.25,\qquad
+\lambda_2\approx-0.25.
+$$
+
+For the chaotic trajectory,
+
+$$
+\lambda_1\approx+0.097,\qquad
+\lambda_2\approx-0.597.
+$$
+
+The sum of the two exponents remains approximately $-0.5$, consistent with the system's phase-space divergence.
+
+These results indicate that different attractors can coexist for the same parameter values and that the observed long-term behavior depends on the initial conditions.
+
+The reported exponents are numerical estimates and may vary slightly with integration time and numerical settings.
+
+## Basin of Attraction
+
+A preliminary basin of attraction analysis is performed to investigate how different initial conditions lead to regular or chaotic long-term behavior.
+
+The initial-condition space is sampled over a two-dimensional grid:
+
+$$
+0.24\leq\theta_0\leq0.28
+$$
+
+$$
+-0.05\leq\omega_0\leq0.05.
+$$
+
+For each initial condition, the trajectory is integrated and sampled at successive driving periods after an initial transient.
+
+The standard deviation of the wrapped angular Poincaré coordinates is used as a numerical indicator to distinguish the two observed types of behavior.
+
+The resulting basin map illustrates regions classified as regular or chaotic.
+
+Selected points from both regions are independently checked using the full Lyapunov spectrum calculated through QR decomposition.
+
+The independent checks agree with the preliminary basin classification for the tested points.
+
+**Methodological note:** The basin map is based on a finite-resolution grid and a threshold-based classification criterion. Only selected grid points are independently validated using Lyapunov exponents. Consequently, the map provides preliminary numerical evidence of the coexistence of different attractors; it does not establish the fractal nature of basin boundaries.
 
 ## Numerical Validation
 
-The numerical results are checked by repeating the simulations with different solver tolerances.
+Numerical reliability is examined through several checks:
 
-The maximum trajectory separation obtained using the original solver tolerances is approximately $0.48065$, while the result using stricter tolerances is approximately $0.48034$.
+1. Repeating trajectory integrations with different solver tolerances.
+2. Comparing independent methods for estimating the largest Lyapunov exponent.
+3. Varying the renormalization interval and total integration time.
+4. Checking the sum of the full Lyapunov spectrum against the expected phase-space divergence.
+5. Independently validating selected regular and chaotic initial conditions.
+
+For the initial sensitivity analysis, the maximum trajectory separation obtained with the original solver tolerances is approximately $0.48065$.
+
+Using stricter tolerances, the corresponding result is approximately $0.48034$.
 
 The close agreement supports the numerical consistency of the observed trajectory separation.
+
+Although the Lyapunov estimates show good agreement across independent approaches, their finite-time values retain some dependence on numerical settings and integration duration. Therefore, the reported exponents are presented as approximate values.
 
 ## Model Limitations
 
 1. The model assumes linear damping and sinusoidal external forcing. Other physical effects, such as nonlinear friction, noise, and parameter uncertainty, are not included.
 
-2. The numerical conclusions are specific to the investigated parameter range and initial conditions. Different values of the damping coefficient, driving amplitude, or driving frequency may lead to different dynamical regimes.
+2. The numerical conclusions depend on the investigated parameter ranges and initial conditions. Different damping coefficients, driving amplitudes, or driving frequencies may lead to different dynamical regimes.
 
-3. Numerical estimates of the largest Lyapunov exponent depend on integration accuracy, transient removal, renormalization interval, and total integration time. Therefore, convergence and cross-validation are important when interpreting the result.
+3. The basin of attraction analysis uses a finite grid and a threshold-based classification method. Its resolution and classification accuracy are therefore limited.
+
+4. Numerical estimates of Lyapunov exponents depend on integration accuracy, transient removal, renormalization intervals, and total integration time. Convergence tests and independent numerical approaches are important for reliable interpretation.
 
 ## Requirements
 
@@ -153,6 +326,8 @@ nonlinear-driven-pendulum/
 │
 ├── nonlinear_driven_pendulum.ipynb
 ├── requirements.txt
+├── LICENSE
+├── README.md
 └── .gitignore
 ```
 
@@ -160,11 +335,16 @@ nonlinear-driven-pendulum/
 
 Possible extensions include:
 
-- Mapping the transition between regular and chaotic dynamics over a wider parameter range.
-- Constructing bifurcation diagrams as a function of the driving amplitude or frequency.
-- Investigating how the largest Lyapunov exponent changes across different dynamical regimes.
-- Studying the influence of damping and driving frequency on the structure of the attractor.
+- Mapping transitions between regular and chaotic dynamics over a wider parameter range.
+- Constructing bifurcation diagrams as functions of the driving amplitude and frequency.
+- Investigating the variation of Lyapunov exponents across different dynamical regimes.
+- Studying the influence of damping and driving frequency on attractor structure.
+- Performing higher-resolution basin analysis and investigating basin boundary geometry.
 - Comparing numerical predictions with experimental driven-pendulum systems.
+
+## License
+
+This project is distributed under the MIT License. See the `LICENSE` file for details.
 
 ## Author
 
